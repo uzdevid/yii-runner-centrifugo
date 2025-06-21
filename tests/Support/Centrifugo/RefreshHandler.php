@@ -2,11 +2,11 @@
 
 namespace UzDevid\Yii\Runner\Centrifugo\Tests\Support\Centrifugo;
 
-use RoadRunner\Centrifugo\Request\RequestInterface;
+use RoadRunner\Centrifugo\Request\Refresh;
 use UzDevid\Yii\Runner\Centrifugo\Handler\RefreshHandlerInterface;
 
 class RefreshHandler implements RefreshHandlerInterface {
-    public function handle(RequestInterface $request): void {
+    public function handle(Refresh $request): void {
 
     }
 }

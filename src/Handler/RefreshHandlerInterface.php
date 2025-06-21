@@ -2,4 +2,14 @@
 
 namespace UzDevid\Yii\Runner\Centrifugo\Handler;
 
-interface RefreshHandlerInterface extends HandlerInterface { }
+use RoadRunner\Centrifugo\Request\Refresh;
+use UzDevid\Yii\Runner\Centrifugo\Exception\MessageExceptionInterface;
+
+interface RefreshHandlerInterface {
+    /**
+     * @param Refresh $request
+     * @return void
+     * @throws MessageExceptionInterface
+     */
+    public function handle(Refresh $request): void;
+}

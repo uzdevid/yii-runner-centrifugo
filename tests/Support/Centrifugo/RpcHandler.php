@@ -2,11 +2,15 @@
 
 namespace UzDevid\Yii\Runner\Centrifugo\Tests\Support\Centrifugo;
 
-use RoadRunner\Centrifugo\Request\RequestInterface;
+use RoadRunner\Centrifugo\Request\RPC;
 use UzDevid\Yii\Runner\Centrifugo\Handler\RpcHandlerInterface;
 
 class RpcHandler implements RpcHandlerInterface {
-    public function handle(RequestInterface $request): void {
+    /**
+     * @param RPC $request
+     * @return void
+     */
+    public function handle(RPC $request): void {
 
     }
 }

@@ -5,10 +5,17 @@ namespace UzDevid\Yii\Runner\Centrifugo;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RoadRunner\Centrifugo\Request\RequestType;
+use RoadRunner\Centrifugo\Request\Connect;
+use RoadRunner\Centrifugo\Request\Invalid;
+use RoadRunner\Centrifugo\Request\Publish;
+use RoadRunner\Centrifugo\Request\Refresh;
+use RoadRunner\Centrifugo\Request\RequestInterface;
+use RoadRunner\Centrifugo\Request\RPC;
+use RoadRunner\Centrifugo\Request\SubRefresh;
+use RoadRunner\Centrifugo\Request\Subscribe;
 use UzDevid\Yii\Runner\Centrifugo\Exception\HandlerNotFoundException;
+use UzDevid\Yii\Runner\Centrifugo\Exception\MessageExceptionInterface;
 use UzDevid\Yii\Runner\Centrifugo\Handler\ConnectHandlerInterface;
-use UzDevid\Yii\Runner\Centrifugo\Handler\HandlerInterface;
 use UzDevid\Yii\Runner\Centrifugo\Handler\InvalidRequestHandlerInterface;
 use UzDevid\Yii\Runner\Centrifugo\Handler\PublishHandlerInterface;
 use UzDevid\Yii\Runner\Centrifugo\Handler\RefreshHandlerInterface;
@@ -26,26 +33,24 @@ final class Application {
     }
 
     /**
-     * @param RequestType $requestType
-     * @return HandlerInterface
+     * @param RequestInterface $request
      * @throws ContainerExceptionInterface
      * @throws HandlerNotFoundException
+     * @throws MessageExceptionInterface
      */
-    public function getServiceHandler(RequestType $requestType): HandlerInterface {
-        $handlerInterfaceClass = match ($requestType) {
-            RequestType::Connect => ConnectHandlerInterface::class,
-            RequestType::Refresh => RefreshHandlerInterface::class,
-            RequestType::Invalid => InvalidRequestHandlerInterface::class,
-            RequestType::Subscribe => SubscribeHandlerInterface::class,
-            RequestType::SubRefresh => SubRefreshHandlerInterface::class,
-            RequestType::Publish => PublishHandlerInterface::class,
-            RequestType::RPC => RpcHandlerInterface::class,
-        };
-
+    public function handleRequest(RequestInterface $request): void {
         try {
-            return $this->container->get($handlerInterfaceClass);
+            match (true) {
+                $request instanceof Publish => $this->container->get(PublishHandlerInterface::class)->handle($request),
+                $request instanceof Subscribe => $this->container->get(SubscribeHandlerInterface::class)->handle($request),
+                $request instanceof Refresh => $this->container->get(RefreshHandlerInterface::class)->handle($request),
+                $request instanceof Connect => $this->container->get(ConnectHandlerInterface::class)->handle($request),
+                $request instanceof Invalid => $this->container->get(InvalidRequestHandlerInterface::class)->handle($request),
+                $request instanceof SubRefresh => $this->container->get(SubRefreshHandlerInterface::class)->handle($request),
+                $request instanceof RPC => $this->container->get(RpcHandlerInterface::class)->handle($request),
+            };
         } catch (NotFoundExceptionInterface $e) {
-            throw new HandlerNotFoundException(sprintf('Handler %s not found for handling %s request', $handlerInterfaceClass, $requestType->value), $e->getCode(), $e);
+            throw new HandlerNotFoundException('Handler not found for handling this request', $e->getCode(), $e);
         }
     }
 }

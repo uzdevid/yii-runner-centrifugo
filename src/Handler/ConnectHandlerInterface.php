@@ -2,4 +2,14 @@
 
 namespace UzDevid\Yii\Runner\Centrifugo\Handler;
 
-interface ConnectHandlerInterface extends HandlerInterface { }
+use RoadRunner\Centrifugo\Request\Connect;
+use UzDevid\Yii\Runner\Centrifugo\Exception\MessageExceptionInterface;
+
+interface ConnectHandlerInterface {
+    /**
+     * @param Connect $request
+     * @return void
+     * @throws MessageExceptionInterface
+     */
+    public function handle(Connect $request): void;
+}

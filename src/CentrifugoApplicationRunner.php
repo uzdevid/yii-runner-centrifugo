@@ -8,10 +8,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RoadRunner\Centrifugo\CentrifugoWorker;
 use RoadRunner\Centrifugo\Request\RequestFactory;
-use RoadRunner\Centrifugo\Request\RequestType;
 use Spiral\RoadRunner\Worker;
 use Throwable;
-use UzDevid\Yii\Runner\Centrifugo\Exception\HandlerNotFoundException;
 use UzDevid\Yii\Runner\Centrifugo\Exception\MessageExceptionInterface;
 use Yiisoft\Di\StateResetter;
 use Yiisoft\ErrorHandler\ErrorHandler;
@@ -170,20 +168,11 @@ class CentrifugoApplicationRunner extends ApplicationRunner {
                 break;
             }
 
-            $requestType = RequestType::createFrom($request);
-
             try {
-                $service = $application->getServiceHandler($requestType);
-            } catch (HandlerNotFoundException $e) {
-                $request->error(0, (string) $errorHandler->handle($e));
-                continue;
-            }
-
-            try {
-                $service->handle($request);
+                $application->handleRequest($request);
             } catch (MessageExceptionInterface $e) {
-                $errorHandler->handle($e);
-                $request->error($e->getCode(), $e->getMessage());
+                $request->error($e->getCode(), (string) $errorHandler->handle($e));
+                continue;
             }
 
             $this->afterRespond($container);

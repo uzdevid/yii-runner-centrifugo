@@ -2,4 +2,14 @@
 
 namespace UzDevid\Yii\Runner\Centrifugo\Handler;
 
-interface RpcHandlerInterface extends HandlerInterface { }
+use RoadRunner\Centrifugo\Request\RPC;
+use UzDevid\Yii\Runner\Centrifugo\Exception\MessageExceptionInterface;
+
+interface RpcHandlerInterface {
+    /**
+     * @param RPC $request
+     * @return void
+     * @throws MessageExceptionInterface
+     */
+    public function handle(RPC $request): void;
+}
