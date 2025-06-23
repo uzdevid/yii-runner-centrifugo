@@ -16,7 +16,7 @@
         "php": "^8.1",
         "psr/container": "^2.0",
         "roadrunner-php/centrifugo": "^2.2",
-        "spiral/roadrunner": "^2024.1",
+        "spiral/roadrunner": "^2025.1",
         "yiisoft/definitions": "^1.0|^2.0|^3.0",
         "yiisoft/di": "^1.0",
         "yiisoft/error-handler": "^3.0",
